@@ -105,6 +105,7 @@ sec4.addNote("Leave extra slot in party to get fossil")
 
 sec4.add2Div("sec4")
 
+
 let sec5 = new Section("Pre Gym 6")
 sec5.addMon("Jigglypuff", null, "115", null, 1)
 sec5.addMon("corfish", 20, "117", 30, 2)
@@ -147,6 +148,18 @@ sec5.addMon("Spheal", 32, "Shoal Cave", "32,44", 3)
 sec5.addMon("Castform", null, "Weather Institute", null, 1)
 sec5.addMon("Shiftree", null, null, null, 1)
 sec5.addMon("Kechleon", null, null, null, 1)
+
+sec5.addNote("Grab the berries near Jigglypuff")
+sec5.addNote("Get good rod before new mauville")
+sec5.addNote("Get thunderstone in New Mauville")
+sec5.addNote("Get acro bike before leaving for Fourtree")
+sec5.addNote("Get Leaf stone on 118")
+sec5.addNote("Set fourtree city as new teleport hub")
+sec5.addNote("Get chesto berries on route 121")
+sec5.addNote("Get sea incense in Mt. Pyre")
+sec5.addNote("Set mossdeep as TP point after defeating team aqua")
+sec5.addNote("When you enter the space center in mossdeep, check what item you need to get. Might be in the next section.")
+
 
 sec5.add2Div("sec5")
 
