@@ -1,4 +1,4 @@
-import { Section } from "/js/section-create.js";
+import { Section } from "/Oak-Challenge/js/section-create.js";
 
 //=============================================================
 // ||                        Pre Gym 1                       ||        
