@@ -174,7 +174,7 @@ export class Section{
             if(m.evolve_lvl.length == 1)
             {
                 if(!isNaN(m.evolve_lvl[0])){
-                    rcNeeded += (m.evolve_lvl[0]-m.level)*Math.max(1, m.numToCatch-1)
+                    rcNeeded += Math.max(1, (m.evolve_lvl[0]-m.level)*Math.max(1, m.numToCatch-1))
                 }
             }
             else{
