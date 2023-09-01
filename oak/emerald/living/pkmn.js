@@ -153,20 +153,22 @@ class Section{
         table.classList.add("table-hover")
 
 
-        let header = document.createElement("tr")
-        createChildCell(header, "Name", "th")
-        createChildCell(header, "Level", "th")
-        createChildCell(header, "Route", "th")
-        createChildCell(header, "Evolve Level", "th")
-        createChildCell(header, "# to catch", "th")
-        createChildCell(header, "Cought", "th")
+        let header = document.createElement("thead")
+        let headerRow = document.createElement("tr")
+        createChildCell(headerRow, "Name", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Level", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Route", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Evolve Level", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "# to catch", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Cought", "th").setAttribute("scope","col")
+        header.appendChild(headerRow)
         table.appendChild(header)
 
         let rcNeeded = 0
         let monsNeeded = 0
-
+        let tbody = document.createElement("tbody")
         this.mons.forEach(m => {
-            table.appendChild(m.toRow())
+            tbody.appendChild(m.toRow())
             if(m.evolve_lvl.length == 1)
             {
                 if(!isNaN(m.evolve_lvl[0])){
@@ -189,8 +191,8 @@ class Section{
         createChildCell(resRow, monsNeeded)
         
         // resRow.classList.add("table-secondary")
-        table.appendChild(resRow)
-        
+        tbody.appendChild(resRow)
+        table.appendChild(tbody)
 
         
         let curCount = 0
