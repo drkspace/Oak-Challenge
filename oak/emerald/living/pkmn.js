@@ -90,6 +90,21 @@ sec3.addNote("Should have 90 pokemon")
 
 sec3.add2Div("sec3")
 
+let sec4 = new Section("Pre Gym 4/5")
+sec4.addMon("Anorith (breed)", 5, 117, null, 1, ["Breed with Tentacool"])
+sec4.addMon("Sandshrew", 22, "Mirage Tower", 22, 2)
+sec4.addMon("Cacnea", 22, "Desert", 32, 2)
+sec4.addMon("Baltoy", 21, "Desert", 36, 2)
+sec4.addMon("Trapinch", 24, "Mirage Tower", "35,45", 3)
+sec4.addMon("Anorith", 15, "Mirage Tower", 40, 1, ["Must be female"])
+
+sec4.addNote("Get fire stone in Fiery Path")
+sec4.addNote("Evolve desert pokemon before leaving Mauville")
+sec4.addNote("Will use Mauville as TP point")
+sec4.addNote("Leave extra slot in party to get fossil")
+
+sec4.add2Div("sec4")
+
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
