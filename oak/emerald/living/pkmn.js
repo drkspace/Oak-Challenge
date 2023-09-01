@@ -184,7 +184,8 @@ class Section{
             monsNeeded += m.numToCatch
         });
         let resRow = document.createElement("tr")
-        createChildCell(resRow, "—")
+        resRow.classList.add("fw-bold")
+        createChildCell(resRow, "Totals")
         createChildCell(resRow, "—")
         createChildCell(resRow, "—")
         createChildCell(resRow, rcNeeded)
