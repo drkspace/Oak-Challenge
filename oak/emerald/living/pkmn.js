@@ -1,5 +1,15 @@
 
 
+if (typeof(Storage) !== undefined)
+{
+    doStorage = true
+}
+else
+{
+    console.warn("No local storage available for the browser. Results will not save")
+    doStorage = false
+}
+
 function createChildCell(parent, inner, cellType="td", customId=null){
     cell = document.createElement(cellType)
     if(inner instanceof HTMLElement)
@@ -13,7 +23,7 @@ function createChildCell(parent, inner, cellType="td", customId=null){
         });
     }
     else{
-        cell.innerHTML = inner
+        cell.innerText = inner
     }
 
     if (customId != null)
@@ -68,22 +78,20 @@ class Mon{
         let nameCell = createChildCell(row, this.name)
         if(this.notes != null)
         {
-            let pop = document.createElement("a")
-            pop.innerText = this.name
-            pop.setAttribute("href", "#")
-            pop.setAttribute("data-bs-container", "body")
-            pop.setAttribute("data-bs-toggle", "popover")
-            pop.setAttribute("data-bs-trigger", "hover")
-            pop.setAttribute("data-bs-html", "true")
-            pop.setAttribute("data-bs-title", "Notes")
+            nameCell.innerText = this.name
+
+            nameCell.setAttribute("data-bs-container", "body")
+            nameCell.setAttribute("data-bs-toggle", "popover")
+            nameCell.setAttribute("data-bs-trigger", "hover")
+            nameCell.setAttribute("data-bs-html", "true")
+            nameCell.setAttribute("data-bs-title", "Notes")
             let notesHTML = "<ul>"
             this.notes.forEach(n => {
                 notesHTML += "<li>" + n + "</li>"
             });
             notesHTML += "</ul>"
-            pop.setAttribute("data-bs-content", notesHTML)
-            nameCell.innerHTML = ""
-            nameCell.appendChild(pop)
+            nameCell.setAttribute("data-bs-content", notesHTML)
+            nameCell.classList.add("text-decoration-underline")
         }
         createChildCell(row, this.level)
         createChildCell(row, this.route)
@@ -95,7 +103,21 @@ class Mon{
         for (let i = 0; i < this.numToCatch; i++) {
             checks.push(document.createElement("input"))
             checks[i].setAttribute("type", "checkbox")
-            checks[i].setAttribute("id", this.name+"-cought1")
+            checks[i].setAttribute("id", this.name+"-cought-"+i)
+            if(doStorage)
+            {
+                let prevChecked = localStorage.getItem(this.name+"-cought-"+i)
+                
+                // Yes, this should be done in 1 line, but just in case I'll count the amount of captures here
+                if (prevChecked == false || prevChecked==null)
+                {
+                    checks[i].checked = false
+                }
+                else
+                {
+                    checks[i].checked = true
+                }
+            }
         }
         if(this.numToCatch > 1){
         checks.splice(1, 0, document.createElement("p"))
@@ -124,6 +146,13 @@ class Section{
 
     toTable(){
         let table = document.createElement("table")
+        table.classList.add("table")
+        table.classList.add("table-striped")
+        table.classList.add("table-bordered")
+        table.classList.add("px-2")
+        table.classList.add("table-hover")
+
+
         let header = document.createElement("tr")
         createChildCell(header, "Name", "th")
         createChildCell(header, "Level", "th")
@@ -152,28 +181,34 @@ class Section{
             }
             monsNeeded += m.numToCatch
         });
-        let resRow = document.createElement("tfoot")
+        let resRow = document.createElement("tr")
         createChildCell(resRow, "—")
         createChildCell(resRow, "—")
         createChildCell(resRow, "—")
         createChildCell(resRow, rcNeeded)
         createChildCell(resRow, monsNeeded)
-        let countCell = createChildCell(resRow, "0","td", this.name+" count")
         
         // resRow.classList.add("table-secondary")
         table.appendChild(resRow)
-
         
 
+        
+        let curCount = 0
         Array.from(table.getElementsByTagName("input")).forEach(ele =>{
             ele.addEventListener('change', (event) => {
                 if (event.currentTarget.checked) {
                     countCell.innerHTML = Number(countCell.innerHTML)+1
+                    localStorage.setItem(event.currentTarget.id, true)
                 } else {
                     countCell.innerHTML = Number(countCell.innerHTML)-1
+                    localStorage.setItem(event.currentTarget.id, false)
                 }
               })
+              curCount += ele.checked
         })
+
+        let countCell = createChildCell(resRow, curCount,"td", this.name.replace(/\s+/g, '-')+"-count")
+
 
         return table;
     }
@@ -194,6 +229,7 @@ class Section{
         div.appendChild(tmp)
         let notes = document.createElement("ul")
         notes.classList.add("list-group")
+        notes.classList.add("px-2")
         this.notes.forEach(n => {
             let tmp = document.createElement("li")
             tmp.innerText = n
