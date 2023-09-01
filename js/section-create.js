@@ -84,7 +84,7 @@ class Mon{
 
             nameCell.setAttribute("data-bs-container", "body")
             nameCell.setAttribute("data-bs-toggle", "popover")
-            nameCell.setAttribute("data-bs-trigger", "hover")
+            nameCell.setAttribute("data-bs-trigger", "hover click")
             nameCell.setAttribute("data-bs-html", "true")
             nameCell.setAttribute("data-bs-title", "Notes")
             let notesHTML = "<ul>"
