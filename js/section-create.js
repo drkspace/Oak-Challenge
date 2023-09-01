@@ -108,7 +108,7 @@ class Mon{
             checks[i].setAttribute("id", this.name+"-cought-"+i)
             if(doStorage)
             {
-                let prevChecked = localStorage.getItem(this.name+"-cought-"+i)
+                let prevChecked = JSON.parse(localStorage.getItem(this.name+"-cought-"+i))
                 
                 // Yes, this should be done in 1 line, but just in case I'll count the amount of captures here
                 if (prevChecked == false || prevChecked==null)
@@ -152,7 +152,7 @@ export class Section{
         table.classList.add("table-striped")
         table.classList.add("table-bordered")
         table.classList.add("px-2")
-        table.classList.add("table-hover")
+        // table.classList.add("table-hover")
 
 
         let header = document.createElement("thead")
@@ -203,10 +203,10 @@ export class Section{
             ele.addEventListener('change', (event) => {
                 if (event.currentTarget.checked) {
                     countCell.innerHTML = Number(countCell.innerHTML)+1
-                    localStorage.setItem(event.currentTarget.id, true)
+                    localStorage.setItem(event.currentTarget.id, "true")
                 } else {
                     countCell.innerHTML = Number(countCell.innerHTML)-1
-                    localStorage.setItem(event.currentTarget.id, false)
+                    localStorage.setItem(event.currentTarget.id, "false")
                 }
               })
               curCount += ele.checked
