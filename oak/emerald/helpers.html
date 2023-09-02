@@ -6,8 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <base href=".">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Tangerine">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
 
 <body>
     <header class="text-center">
@@ -24,7 +23,7 @@
             <input type="number" min="0" max="4294967295" id="seed-b10" placeholder="Seed (base 10)"> <label
                 for="onBike">On
                 Bike</label><input type="checkbox" id="onBike"><br><br>
-            <input pattern="[a-fA-F\d]+" id="seed-b8" placeholder="Seed (hex)"> <br><br>
+            <input pattern="[a-fA-F\d]+" id="seed-b16" placeholder="Seed (hex)"> <br><br>
             <input type="number" id="max-look-ahead" placeholder="Lookahead (frames)" min="0"> <br>
             <select id="select-route" name="route"></select> <br>
             <select id="select-mon" name="mon"></select><br><br>
@@ -44,6 +43,24 @@
         </div>
     </div>
     <hr>
+    <div>
+        <h2 class="text-center">
+            Frame Difference
+        </h2>
+
+        <div class="px-5 mt-1">
+            <label for="diff-init-seed-b10">Initial Seed:&nbsp;</label><input type="number" min="0" max="4294967295"
+                id="diff-init-seed-b10" placeholder="Seed (base 10)"><input pattern="[a-fA-F\d]+" id="diff-init-seed-b16"
+                placeholder="Seed (hex)"><br>
+            <label for="diff-final-seed-b10">Final Seed:&nbsp;&nbsp;</label><input type="number" min="0"
+                max="4294967295" id="diff-final-seed-b10" placeholder="Seed (base 10)"><input pattern="[a-fA-F\d]+"
+                id="diff-final-seed-b16" placeholder="Seed (hex)"><br>
+            <button class="btn btn-primary" id="btn-diff" onclick="seedDiff()">Go!</button>
+        </div>
+
+        <p id="diff" class="mx-5 mt-1 shadow-sm p-3 mb-5 bg-body-tertiary rounded"></p>
+
+    </div>
 
 
 
@@ -276,6 +293,57 @@
 
         document.getElementById("btn").addEventListener('click', findNextEncounter)
 
+    </script>
+
+    <script>
+        function adv(seed) {
+            return (seed * 0x41C64E6Dn + 0x6073n) % 2n ** 32n
+        }
+
+        function seedDiff(){
+            let seed1 = document.getElementById("diff-init-seed-b10").value
+            if (seed1 == "") {
+                seed = parseInt(document.getElementById("diff-init-seed-b16").value, 16)
+            }
+            if (seed1 == "") {
+                alert("Invalid Seed")
+                return
+            }
+
+            let seed2 = document.getElementById("diff-final-seed-b10").value
+            if (seed2 == "") {
+                seed = parseInt(document.getElementById("diff-final-seed-b16").value, 16)
+            }
+            if (seed2 == "") {
+                alert("Invalid Seed")
+                return
+            }
+
+            seed1 = BigInt(seed1)
+            const initSeed = seed1
+            seed2 = BigInt(seed2)
+            const finalSeed = seed2
+            let i;
+            const MAX_ADV = 10000;
+            for (i = 0; i < 10000; i++) {
+                if (initSeed==seed2){
+                    i = -i
+                    break
+                }
+                if(finalSeed==seed1){
+                    break
+                }
+                seed1 = adv(seed1)
+                seed2 = adv(seed2)
+            }
+            if(i < MAX_ADV)
+            {
+                document.getElementById("diff").innerText = "The inital seed is "+i+" RNG advancements away"
+            }
+            else{
+                document.getElementById("diff").innerText = "Could not find the seeds within " + MAX_ADV + " frames"
+            }
+        }
     </script>
 </body>
 
