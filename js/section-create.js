@@ -162,7 +162,7 @@ export class Section{
         createChildCell(headerRow, "Route", "th").setAttribute("scope","col")
         createChildCell(headerRow, "Evolve Level", "th").setAttribute("scope","col")
         createChildCell(headerRow, "# to catch", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "Cought", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Caught", "th").setAttribute("scope","col")
         header.appendChild(headerRow)
         table.appendChild(header)
 
