@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <base href=".">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Tangerine">
+
+<body>
+    <header class="text-center">
+        <h1>Pokemon Emerald Helpers</h1>
+        <a href="/Oak-Challenge/index.html" class="btn btn-primary">Home</a>
+    </header>
+
+    <div>
+        <h3 class="text-center">
+            Encounter Finder
+        </h3>
+        <h4 class="text-center" style="font-family: Tangerine;">No need for sweet scent</h4>
+        <div id="find-enocounter" class="px-5 mt-1">
+            <input type="number" min="0" max="4294967295" id="seed-b10" placeholder="Seed (base 10)"> <label
+                for="onBike">On
+                Bike</label><input type="checkbox" id="onBike"><br><br>
+            <input pattern="[a-fA-F\d]+" id="seed-b8" placeholder="Seed (hex)"> <br><br>
+            <input type="number" id="max-look-ahead" placeholder="Lookahead (frames)" min="0"> <br>
+            <select id="select-route" name="route"></select> <br>
+            <select id="select-mon" name="mon"></select><br><br>
+            <button class="btn btn-primary" id="btn">Go!</button>
+        </div>
+        <br>
+        <div id="encounter" class="mx-5 my-1">
+            <table class="table table-bordered text-center">
+                <thead>
+                    <th>Frames Ahead</th>
+                    <th>Generation Seed</th>
+                </thead>
+                <tbody id="found-slot">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+
+    <script type="module">
+
+        import { mons } from "/Oak-Challenge/js/mon-list.js";
+
+        async function getEncounterList() {
+            const resp = await fetch("https://raw.githubusercontent.com/Admiral-Fish/EncounterTableGenerator/91ae7f26f01d5e35b037d0d81c1c0e7659874812/Gen3/emerald/wild_encounters.json")
+            const encounterList = await resp.json();
+
+            return encounterList
+        }
+
+        const encounters = (await getEncounterList()).map(ele => {
+            ele["map"] = ele["map"].replace("MAP", "").replaceAll("_", " ").trim()
+            ele["base_label"] = ele["base_label"].replace("g", "").replaceAll("_", " ").trim()
+            return ele
+        })
+
+        let selectRoute = document.getElementById("select-route")
+        encounters.forEach(ele => {
+            let tmp = document.createElement("option")
+            tmp.setAttribute("value", ele["base_label"])
+            tmp.innerText = ele["map"]
+            selectRoute.appendChild(tmp)
+        });
+
+        function updateEncounter(event) {
+            let i;
+            if (typeof (event) == typeof (0)) {
+                i = event
+            }
+            else {
+                const val = event.currentTarget.value
+                for (i = 0; i < encounters.length && encounters[i]["base_label"] != val; i++) {
+                }
+            }
+
+            curMap = encounters[i]
+            let selectMon = document.getElementById("select-mon")
+            selectMon.innerHTML = ""
+
+            if ("land_mons" in curMap) {
+                curMap["land_mons"]["mons"].forEach((ele, idx) => {
+                    let tmp = document.createElement("option")
+                    tmp.setAttribute("value", idx)
+                    tmp.innerText = "Land: " + mons[ele["species"]] + " LVL " + ele["min_level"] + "-" + ele["max_level"]
+                    selectMon.appendChild(tmp)
+                })
+            }
+            if ("water_mons" in curMap) {
+                curMap["water_mons"]["mons"].forEach((ele, idx) => {
+                    let tmp = document.createElement("option")
+                    tmp.setAttribute("value", idx)
+                    tmp.innerText = "Water: " + mons[ele["species"]] + " LVL " + ele["min_level"] + "-" + ele["max_level"]
+                    selectMon.appendChild(tmp)
+                })
+            }
+            if ("fishing_mons" in curMap) {
+                curMap["fishing_mons"]["mons"].forEach((ele, idx) => {
+                    let tmp = document.createElement("option")
+                    tmp.setAttribute("value", idx)
+                    tmp.innerText = "Fishing: " + mons[ele["species"]] + " LVL " + ele["min_level"] + "-" + ele["max_level"]
+                    selectMon.appendChild(tmp)
+                })
+            }
+        }
+
+        var curMap;
+        updateEncounter(0)
+        selectRoute.addEventListener("change", updateEncounter)
+
+
+
+        const slots = [20, 40, 50, 60, 70, 80, 85, 90, 94, 98, 99, 100]
+        const abilites = ["Hardy", "Lonley", "Brave", "Adamant", "Naughty", "Bold", "Docile", "Relaxed",
+            "Impish", "Lax", "Timid", "Hasty", "Serious", "Jolly", "Naive", "Modest", "Mild", "Quiet", "Bashful", "Rash", "Calm", "Gentle", "Sassy", "Careful", "Quirky"]
+
+        export function adv(seed) {
+            return (BigInt(seed) * 0x41C64E6Dn + 0x6073n) % 2n ** 32n
+        }
+        function getEncounterSlot(s) {
+            const upper = (BigInt(s) % 0xffff0000n) >> 16n
+            const val = upper % 100n
+            for (let i = 0; i < slots.length; i++) {
+                if (slots[i] > val) {
+                    return i
+                }
+            }
+
+        }
+        function isEncounter(seed, rate) {
+            return ((BigInt(seed) & 0xffff0000n) >> 16n) % 2880n < (BigInt(rate) * 16n)
+        }
+
+        function forceEncounter(seed, slot, maxSearch, rate) {
+            if (slot instanceof Number) {
+                slot = [slot]
+            }
+
+            for (let i = 0; i < maxSearch; i++) {
+                if (isEncounter(seed, rate)) {
+
+                    if (slot.includes(getEncounterSlot(adv(seed)))) {
+                        return [i, seed, true]
+                    }
+                }
+                seed = adv(seed)
+            }
+            return [maxSearch, seed, false]
+        }
+
+        function genMon(seed) {
+            seed = adv(seed)
+            let slot = getEncounterSlot(seed)
+            seed = adv(adv(seed))
+            let nat = ((seed & 0xffff0000n) >> 16n) % 25n
+            seed = adv(seed)
+            let botPID = (seed & 0xffff0000n) >> 16n
+            seed = adv(seed)
+            let upPID = (seed & 0xffff0000n)
+            let tenPID = upPID | botPID
+
+            while (tenPID % 25n != nat) {
+                seed = adv(seed)
+                botPID = (seed & 0xffff0000n) >> 16n
+                seed = adv(seed)
+                upPID = (seed & 0xffff0000n)
+                tenPID = upPID | botPID
+            }
+            seed = adv(seed)
+            let tmp = ((seed & 0xffff0000n) >> 16n).toString(2)
+
+            let hp = parseInt(tmp.slice(11), 2)
+            let atk = parseInt(tmp.slice(6, 11), 2)
+            let deff = parseInt(tmp.slice(1, 6), 2)
+
+            seed = adv(seed)
+            tmp = ((seed & 0xffff0000n) >> 16n).toString(2)
+            let spe = parseInt(tmp.slice(11), 2)
+            let spa = parseInt(tmp.slice(6, 11), 2)
+            let spd = parseInt(tmp.slice(1, 6), 2)
+
+            return { slot: slot, nature: abilites[nat], pid: tenPID.toString(16), hp: hp, atk: atk, deff: deff, spe: spe, spa: spa, spd: spd }
+        }
+
+        export function findNextEncounter() {
+            let seed = document.getElementById("seed-b10").value
+            if (seed == "") {
+                seed = parseInt(document.getElementById("seed-b16").value, 16)
+            }
+            if (seed == "") {
+                alert("Invalid Seed")
+                return
+            }
+            let selectMonEle = document.getElementById("select-mon")
+
+            const slot = parseInt(selectMonEle.value)
+            if (slot < 0 || slot > 11) {
+                alert("Invalid Pokemon")
+            }
+
+            let lookahead = document.getElementById("max-look-ahead").value
+            if (lookahead == "") {
+                lookahead = 60 * 30
+            }
+            else {
+                lookahead = parseInt(lookahead)
+            }
+
+            let rate;
+            if (selectMonEle.options[selectMonEle.selectedIndex].text.includes("Land")) {
+                rate = curMap["land_mons"]["encounter_rate"]
+            } else if (selectMonEle.options[selectMonEle.selectedIndex].text.includes("Water")) {
+                rate = curMap["water_mons"]["encounter_rate"]
+            }
+            else {
+                rate = curMap["fishing_mons"]["encounter_rate"]
+            }
+            if (document.getElementById("onBike").checked) {
+                rate = Math.floor(rate * 8 / 10)
+            }
+
+            let output = document.getElementById("found-slot")
+            output.innerHTML = ''
+
+            let curFrames = 0
+
+            while (curFrames < lookahead) {
+
+                let tmp = forceEncounter(seed, [slot], lookahead, rate)
+                seed = tmp[1]
+                let mon = genMon(seed)
+                let nFramesWait = tmp[0]
+
+                curFrames += nFramesWait
+
+                if (tmp[2] && curFrames <= lookahead) {
+                    let row = document.createElement("tr")
+                    let c = document.createElement("td")
+                    c.innerText = curFrames
+                    row.appendChild(c)
+
+                    c = document.createElement("td")
+                    c.innerText = seed.toString() + " (0x" + seed.toString(16) + ")"
+                    row.appendChild(c)
+                    output.appendChild(row)
+                }
+                else {
+                    if (output.innerHTML == '') {
+                        let row = document.createElement("tr")
+                        let c = document.createElement("td")
+                        c.innerText = "Could not find Pokemon"
+                        row.appendChild(c)
+                        output.appendChild(row)
+                    }
+                    break
+                }
+                seed = adv(seed)
+            }
+        }
+
+        document.getElementById("btn").addEventListener('click', findNextEncounter)
+
+    </script>
+</body>
+
+</html>
