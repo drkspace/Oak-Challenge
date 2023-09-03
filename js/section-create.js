@@ -219,6 +219,9 @@ export class Section{
     }
 
     add2Div(id){
+        this.mons.sort((a,b)=>{
+            ('' + a.route).localeCompare(b.route);
+        })
         let div = document.getElementById(id)
         let tmp = document.createElement("h1")
         tmp.innerHTML = this.name
