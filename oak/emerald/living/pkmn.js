@@ -92,7 +92,7 @@ sec3.add2Div("sec3")
 
 let sec4 = new Section("Pre Gym 4/5")
 sec4.addMon("Anorith (breed)", 5, 117, null, 1, ["Breed with Tentacool"])
-sec4.addMon("Sandshrew", 22, "Mirage Tower", 22, 2)
+sec4.addMon("Sandshrew", 24, "Mirage Tower", 22, 2)
 sec4.addMon("Cacnea", 22, "Desert", 32, 2)
 sec4.addMon("Baltoy", 21, "Desert", 36, 2)
 sec4.addMon("Trapinch", 24, "Mirage Tower", "35,45", 3)
