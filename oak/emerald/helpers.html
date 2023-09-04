@@ -269,7 +269,7 @@
                 if (tmp[2] && curFrames <= lookahead) {
                     let row = document.createElement("tr")
                     let c = document.createElement("td")
-                    c.innerText = curFrames
+                    c.innerText = ''+curFrames+" ("+Math.round(curFrames*100/60)/100+" sec)"
                     row.appendChild(c)
 
                     c = document.createElement("td")
