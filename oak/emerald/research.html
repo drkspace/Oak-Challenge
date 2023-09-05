@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                tags: 'ams'
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+
+    <!-- <base href="."> -->
+</head>
+
+<body class="mx-4">
+    <div>
+        <h3 class="text-center">Random Number Generation</h3>
+        <h5 class="text-center">RNG</h5>
+
+        <p>Randomness in Pokemon Emerald (and all other pokemon games) is not truly random. For Emerald, they used a
+            pseudo-random number generator (pRNG or RNG) to fake randomness. The RNG algorithm they used is a <a
+                href="https://en.wikipedia.org/wiki/Linear_congruential_generator">linear congruential generator</a>,
+            given by Equation \eqref{equ:rng} where $\text{seed}_0=0$.</p>
+        \begin{equation}
+            \label{equ:rng}
+            \text{seed}_{n+1} = \text{seed}_n \times \texttt{0x41C64E6D} + \texttt{0x6073}
+        \end{equation}
+        <p>The current seed value is stored at memory address $\texttt{0x03005D80}$ on the System Bus as a 32 bit
+            unsigned integer (uint_32). The number of times RNG has been advanced is located at $\texttt{0x020249C0}$ on
+            the system bus as a uint_32. In Equation \eqref{equ:rng}, it should be observed that the seeds quickly
+            exceed the uint_32 limit ($2^{32}\approx 4.3\times10^9$), however, any seed $>2^{32}$ will overflow, leading
+            to Equation \eqref{equ:rng_mod}, where "mod" is the <a
+                href="https://en.wikipedia.org/wiki/Modular_arithmetic">modulus operation</a>.</p>
+        \begin{equation}
+            \label{equ:rng_mod}
+            \text{seed}_{n+1} \equiv \text{seed}_n \times \texttt{0x41C64E6D} + \texttt{0x6073} \pmod{2^{32}}
+        \end{equation}
+
+        <p>It can be useful to calculate $\text{seed}_{n-1}$ from $\text{seed}_n$, which is given in Equation
+            \eqref{equ:rng_inv}. The following equations make use of the <a
+                href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">Extended Euclidean algorithm</a> and
+            follow the steps from <a href="https://youtu.be/XVrR1WImOh8?si=8GQZefQJFP5Bixey&t=1149">Matthew Bolan</a>
+        </p>
+        \begin{align*}
+            \text{seed}_{n} \equiv \text{seed}_{n-1} \times \texttt{0x41C64E6D} + \texttt{0x6073} &\pmod{2^{32}}\\
+            \text{seed}_{n}-\texttt{0x6073} \equiv \text{seed}_{n-1} \times \texttt{0x41C64E6D} &\pmod{2^{32}}\\
+            \texttt{0x41C64E6D}\times\texttt{0xEEB9EB65} \equiv 1 &\pmod{2^{32}}\\
+            \text{seed}_{n-1} \times \texttt{0x41C64E6D}\times\texttt{0xEEB9EB65}\equiv \text{seed}_{n-1} \equiv
+            \texttt{0xEEB9EB65}\left(\text{seed}_{n}-\texttt{0x6073}\right) &\pmod{2^{32}}\\
+            \texttt{0xEEB9EB65} \times -\texttt{0x6073} \equiv \texttt{0xA3561A1}&\pmod{2^{32}}
+
+        \end{align*}
+
+        \begin{equation}
+            \label{equ:rng_inv}
+            \text{seed}_{n-1} \equiv \text{seed}_n\times \texttt{0xEEB9EB65} + \texttt{0xA3561A1} \pmod{2^{32}}
+        \end{equation}
+
+        <h3>Pickup</h3>
+        <p>Pickup is an ability of Zigzagoon and Linoone that, once a battle is won, $10\%$ of the time, a random item
+            (shown below) is selected. The ability does not activate if you caught a Pokemon.</p>
+        <figure class="figure mx-auto d-block">
+            <img src="pickup_table_bulbapedia.png" class="figure-img img-fluid rounded" alt="Pickup Table">
+            <figcaption class="figure-caption">Source: <a
+                    href="https://bulbapedia.bulbagarden.net/wiki/Pickup_(Ability)">Bulbapedia</a></figcaption>
+        </figure>
+        <p>The table shows that we will start getting rare candies at level 21, having a $4\%$ chance of being the item (after the $10\%$ chance of activating pickup). It caps out at $10\%$ at level 41.</p>
+        <p>The table is not actually how the game determines the item, however. Instead, there are 2 list of items available for pickup, the regular list and a special list. The special list <strong>only</strong> determines items in the $1\%$ slots, and since rare candies are not in that list, we will be ignoring it.</p>
+        <p>Below are the items in the list.</p>
+        <ol start="0" style="-webkit-column-count: 3;
+        -moz-column-count: 3;
+        column-count: 3;">
+            <li>Potion</li>
+            <li>Antidote</li>
+            <li>Super Potion</li>
+            <li>Great Ball</li>
+            <li>Repel</li>
+            <li>Escape Rope</li>
+            <li>X Attack</li>
+            <li>Full Heal</li>
+            <li>Ultra Ball</li>
+            <li>Hyper Potion</li>
+            <li>Rare Candy</li>
+            <li>Protein</li>
+            <li>Revive</li>
+            <li>HP Up</li>
+            <li>Full Restore</li>
+            <li>Max Revive</li>
+            <li>PP Up</li>
+            <li>Max Elixir</li>
+        </ol>
+        <p>In order to determine what items are available for pickup, Equation \eqref{equ:pickup-slot} is used, where $\texttt{LVL}$ is the level of the pokemon and $i$ is the index of the first pickup item. The items in index $\in[i, i+8]$ will be used for pickup. This shifting of the indices is what causes the striping on the pickup chart above.</p>
+        \begin{equation}
+        \label{equ:pickup-slot}
+            i = \left \lfloor{\texttt{LVL} - 1 \over 10}\right \rfloor
+        \end{equation}
+        
+        <p>Each item does not have an equal chance (unfortunately). To determine the probabilities, ignoring the special items, the following array is used:</p>
+        <ol start="0" style="-webkit-column-count: 3;
+        -moz-column-count: 3;
+        column-count: 3;">
+            <li>30</li>
+            <li>40</li>
+            <li>50</li>
+            <li>60</li>
+            <li>70</li>
+            <li>80</li>
+            <li>90</li>
+            <li>94</li>
+            <li>98</li>
+        </ol>
+        <p>Each element determines the probabilities for that index to be selected. For example, if your random number is 42 (how we will determine what this random number will be is discussed <a href="#pickup-logic">here</a>), the game will check if 42 is less than 30, then less than, 40, and the less than 50. It is, so the game selects index 2. If the Pokemon was level 13, the item that would be selected would be the Great Ball.</p>
+
+        <h4 id="pickup-logic">Pickup Logic</h4>
+        <p>When the pickup gets checked (see <a href="pickup-when">here</a> for how to determine when), for each Pokemon in your party who has the ability pickup <strong>AND</strong> is not holding an item, the follow steps are done:</p>
+        <ol>
+            <li>A new RNG value is calculated</li>
+            <li>If the upper 16 bits of the number is divisible by 10, continue, else, stop</li>
+            <li>A new RNG value is then calculated</li>
+            <li>The upper 16 bits of the RNG value mod 100 determines what item is chosen (see above)</li>
+        </ol>
+        <pre>
+            <code>
+                seed = rng()
+                if (seed << 16) % 10 == 0:
+                    itemSlot = (rng() << 16) % 100
+                    item = determineItem(itemSlot, monLevel)
+            </code>
+        </pre>
+        <p>It should also be noted that, when in a battle, the RNG cycles 2 times per frame.</p>
+        <h4 id="pickup-when">When Pickup happens</h4>
+        <p>Unfortunately, it it not easy to determine what the frame pickup will happen. It does happen about 50 frames after your last input (usually "mon gained xp" for wild battles and "trainer gave you money" text boxes).</p>
+        <p>The best way I have found is to close the last text box, wait until RNG cycles more than 2 times in a frame (the only extraneous RNG calls during this time will be pickup), and calculate the difference. It's not the most elegant solution, but it works.</p>
+
+        <h4>Expected Time</h4>
+        <p>Now it's time for probability. The probability $p$ that, on <strong>1</strong> frame, with $m$ pickup pokemon (for the rest of this discussion, I will be dropping the "pickup" adjective), each with a probability of $p_{RC}$ of selecting a Rare Candy, to get at-least $n$ rare candies is described in Equation \eqref{equ:pickup_prob}.</p>
+        \begin{equation}
+        \label{equ:pickup_prob}
+        p(m,n,p_{RC}) = {{m}\choose{n}}\times(0.1\times p_{RC})
+        \end{equation}
+        <p>So if you want 2 rare candies from a party of 5 level 21-40 linoone:<p>
+
+            $$p(5,2,0.04)={5\choose2}(0.1\times0.04)^2=1.6\times10^{-4}$$
+        <p>Since $p$ is per frame, and we get to choose when to trigger pickup, we can get as many rare candies as we want. However, the probability of finding extra rare candies drops of exponentially. To determine the probability $p_D$ of finding rare candies within $D$ frames, Equation \eqref{equ:pickup_prob_time} is used.</p>
+        \begin{equation}
+        \label{equ:pickup_prob_time}
+        p_D = 1-\left(1-p(m,n,p_{RC})\right)^D
+        \end{equation}
+        <p>You do not want to delay too long because you would be able to start another battle and get the 1 or 2 quick rare candies. So how long should we wait? First lets find the expected delay for 1-6 rare candies. Firstly, we must convert $P_D$, with some $p(m,n,p_{RC})=p$, for a probability density function and then use the expected value formula to calculate the expected value $E(D)$</p>
+        \begin{align*}
+            P_{x}(D) &= \begin{cases}
+                        p_D(0) & D=0\\
+                        P_D(D)-P_D(D-1) & D>0
+                        \end{cases}\\
+            E(D) &= \sum_{d=0}^\infty dP_{x} = P_D(0) + \sum_{d=1}^\infty d\left(  P_D(d)-P_D(d-1) \right)\\
+            &= P_D(0) + \sum_{d=1}^\infty d\left(  1-\left(1-p\right)^d-1+\left(1-p\right)^{d-1} \right)\\
+            &= P_D(0) + \sum_{d=1}^\infty d\left(  \left(1-p\right)^{d-1}-\left(1-p\right)^d \right)\\
+            &=P_D(0) + (1-p)^0 - (1-p)^1 + 2(1-p)^1 - 2(1-p)^2 + 3(1-p)^2 - 3(1-p)^3+ \dots\\
+            &=P_D(0) + (1-p)^0 \cancel{- (1-p)^1} + \cancelto{1}{2}(1-p)^1 \cancel{- 2(1-p)^2} + \cancelto{1}{3}(1-p)^2 \cancel{- 3(1-p)^3} +\dots\\
+            &=P_D(0) + (1-p)^0 + (1-p)^1 + (1-p)^2 + (1-p)^3 + \dots\\
+            E(D) &=P_D(0) + \sum_{d=0}^\infty (1-p)^d
+        \end{align*}
+        <p>We know that $(1-p) < 1$, so we are able to use the <a href="https://en.wikipedia.org/wiki/Geometric_series">geometric series convergence</a> formula, Equation \eqref{equ:geom}, which lets us find $E(D)$ using Equation \eqref{equ:d_expect} (this is probably some well known formula that I'm forgetting about).</p>
+        \begin{align}
+        \label{equ:geom}
+        \sum ar^k = {a \over 1-r}
+        \end{align}
+
+        \begin{align*}
+        E(D) &= P_D(0) + \sum_{d=0}^\infty (1-p)^d = P_D(0) + {1\over 1-(1-p)} = P_D(0) + {1\over p}\\
+        &= 1-\left(1-p\right)^0 + {1\over p} = 1-1+{1\over p}
+        \end{align*}
+
+        \begin{equation}
+        \label{equ:d_expect}
+            E(D) = {1\over p}
+        \end{equation}
+
+        <p>Below is a table for parties of 5 Pokemon that are either level 21-40 or 41+ for the expected number of frames you would need to wait.</p>
+        <table class="table table-bordered">
+            <thead>
+                <th>Number of Rare Candies</th>
+                <th>$E(D)$ Level $\in[21,40]$ (frames)</th>
+                <th>$E(D)$ Level $\ge 41$ (frames)</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>$0$</td>
+                    <td>$1$</td>
+                    <td>$1$</td>
+                </tr>
+                <tr>
+                    <td>$1$</td>
+                    <td>$50$</td>
+                    <td>$20$</td>
+                </tr>
+                <tr>
+                    <td>$2$</td>
+                    <td>$6250$</td>
+                    <td>$1000$</td>
+                </tr>
+                <tr>
+                    <td>$3$</td>
+                    <td>$1.56\times 10^6$</td>
+                    <td>$1.0\times 10^{5}$</td>
+                </tr>
+                <tr>
+                    <td>$4$</td>
+                    <td>$7.81\times 10^8$</td>
+                    <td>$2.0\times 10^{7}$</td>
+                </tr>
+                <tr>
+                    <td>$5$</td>
+                    <td>$9.77\times 10^{11}$</td>
+                    <td>$1.0\times 10^{10}$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>The table shows that you are expected to get no rare candies in 1 frame (which makes sense) and after 2 rare candies, it would take significantly longer to wait for extra candies than just doing another battle.</p>
+        
+    </div>
+    <hr>
+    <div class="mx-4 mt-4">
+        <h2>Useful Memory Locations</h2>
+        <table class="table table-bordered table-striped">
+            
+            <thead class="text-center">
+                <th>Memory Address</th>
+                <th>Description</th>
+                <th>Data Type</th>
+                <th>Memory Domain</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0x020244EC</td>
+                    <td>The information for the trainer's pokemon. See <a href="https://bulbapedia.bulbagarden.net/wiki/Pok%C3%A9mon_data_structure_(Generation_III)">here</a> on more information on the structure of Pokemon.</td>
+                    <td>N/A</td>
+                    <td>System Bus</td>
+                </tr>
+                <tr>
+                    <td>0x02024744</td>
+                    <td>The information on the enemy Pokemon</td>
+                    <td>N/A</td>
+                    <td>System Bus</td>
+                </tr>
+                <tr>
+                    <td>0x30026F9</td>
+                    <td>If you are currently in a battle. 0 means not in a battle, >0 means in a battle</td>
+                    <td>uint_8</td>
+                    <td>System Bus</td>
+                </tr>
+                <tr>
+                    <td>0x03005D80</td>
+                    <td>The current pRNG state</td>
+                    <td>uint_32</td>
+                    <td>System Bus</td>
+                </tr>
+                <tr>
+                    <td>0x020249C0</td>
+                    <td>The current pRNG count (how many times the pRNG has been updated)</td>
+                    <td>uint_32</td>
+                    <td>System Bus</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>Name</th>
+                <th>Description</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>uint_8</td>
+                    <td>Unsigned 8 bit integer</td>
+                </tr>
+                <tr>
+                    <td>uint_16</td>
+                    <td>Unsigned 16 bit integer</td>
+                </tr>
+                <tr>
+                    <td>uint_32</td>
+                    <td>Unsigned 8 bit integer</td>
+                </tr>
+            </tbody>
+            <caption>Description for the data types used. All are little endian unless otherwise specified.</caption>
+        </table>
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
