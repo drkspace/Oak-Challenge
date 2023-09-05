@@ -96,7 +96,7 @@ sec4.addMon("Sandshrew", 22, "Mirage Tower", 22, 2)
 sec4.addMon("Cacnea", 22, "Desert", 32, 2)
 sec4.addMon("Baltoy", 21, "Desert", 36, 2)
 sec4.addMon("Trapinch", 24, "Mirage Tower", "35,45", 3)
-sec4.addMon("Anorith", 15, "Mirage Tower", 40, 1, ["Must be female"])
+sec4.addMon("Anorith", 20, "Mirage Tower", 40, 1, ["Must be female"])
 
 sec4.addNote("Get fire stone in Fiery Path")
 sec4.addNote("Evolve desert pokemon before leaving Mauville")
