@@ -299,6 +299,14 @@
 
     </div>
 
+    <div class="mx-4 mt-4">
+        <h2>Hatching</h2>
+        <p>When a mommy pokemon and a daddy pokemon love eachother very much...</p>
+        <p>If 2 Pokemon are compatible, then every 255 steps, since the last Pokemon was deposited, the game will check if an egg will be generated. Since there'll always be a decent enough chance for an egg to be generated, it's easy enough to just manually skip until your 255th step gives an egg.</p>
+        <p>The hard part is quickly and easily knowing your steps. If you were to search for the values in EWRAM (as a uint_32), they do exist somewhere around address $\texttt{0x028000} - \texttt{0x029000}$. The problem is, whenever you go into a different area/a battle, the values get allocated somewhere else.</p>
+        <p>The method I use is to create a save-state, walk a step and check for values that have incremented by 1. Repeat until the address(es) have been found.</p>
+    </div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
