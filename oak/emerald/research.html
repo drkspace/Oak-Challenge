@@ -305,7 +305,7 @@
         <p>If 2 Pokemon are compatible, then every 255 steps, since the last Pokemon was deposited, the game will check if an egg will be generated. Since there'll always be a decent enough chance for an egg to be generated, it's easy enough to just manually skip until your 255th step gives an egg.</p>
         <p>The hard part is quickly and easily knowing your steps. If you were to search for the values in EWRAM (as a uint_32), they do exist somewhere around address $\texttt{0x028000} - \texttt{0x029000}$. The problem is, whenever you go into a different area/a battle, the values get allocated somewhere else.</p>
         <p>The method I use is to create a save-state, walk a step and check for values that have incremented by 1. Repeat until the address(es) have been found.</p>
-        <p><del>Even if you have generated the egg, the old man won't come out until you leave the route and come back.</del> If you have generated an egg, if you talk to the old man, he will have the egg. You do not need him to walk out.</p>
+        <p><s>Even if you have generated the egg, the old man won't come out until you leave the route and come back.</s> If you have generated an egg, if you talk to the old man, he will have the egg. You do not need him to walk out.</p>
     </div>
 
 
