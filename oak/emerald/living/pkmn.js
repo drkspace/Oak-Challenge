@@ -154,7 +154,7 @@ sec5.addMon("Gloom", null, "121/123/Safari Zone", null, 1, ["You can catch any o
 sec5.addNote("Grab the berries near Jigglypuff")
 sec5.addNote("Get good rod before new mauville")
 sec5.addNote("Get thunderstone in New Mauville")
-sec5.addNote("Get acro bike before leaving for Fourtree")
+sec5.addNote("<s>Get acro bike before leaving for Fourtree</s>You will need both bikes in the safri zone, so you'll have to come back with the other bike.")
 sec5.addNote("Get Leaf stone on 118")
 sec5.addNote("Set fourtree city as new teleport hub")
 sec5.addNote("Get chesto berries on route 121")
