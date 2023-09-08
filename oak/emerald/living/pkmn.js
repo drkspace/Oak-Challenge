@@ -149,6 +149,7 @@ sec5.addMon("Spheal", 32, "Shoal Cave", "32,44", 3)
 sec5.addMon("Castform", null, "Weather Institute", null, 1, ["Have an open party space"])
 sec5.addMon("Shiftree", null, null, null, 1)
 sec5.addMon("Kechleon", null, null, null, 1)
+sec5.addMon("Gloom", null, "121/123/Safari Zone", null, 1, ["You can catch any of them and this can be done before the end of the next section"])
 
 sec5.addNote("Grab the berries near Jigglypuff")
 sec5.addNote("Get good rod before new mauville")
