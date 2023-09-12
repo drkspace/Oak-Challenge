@@ -240,7 +240,7 @@ export class Section{
         notes.classList.add("px-2")
         this.notes.forEach(n => {
             let tmp = document.createElement("li")
-            tmp.innerText = n
+            tmp.innerHTML = n
             tmp.classList.add("list-group-item")
             notes.appendChild(tmp)
         });
