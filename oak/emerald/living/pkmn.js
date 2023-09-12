@@ -165,9 +165,26 @@ sec5.addNote("Breed Wobbafett with a male grimer/koffing/swalot")
 sec5.addNote("Super Rod in Mossdeep City from fisherman in house east of gym")
 sec5.addNote("Set mossdeep as TP point after defeating team aqua")
 sec5.addNote("When you enter the space center in mossdeep, check what item you need to get. Might be in the next section.")
-
+sec5.addNote("Should end with 156 Pokemon")
 
 sec5.add2Div("sec5")
+
+
+sec6 = new Section("Pre Gym 7")
+sec6.addMon("Ludicolo", null, null, null, 1)
+sec6.addMon("Starmie", null, null, null, 1)
+sec6.addMon("Clamperl", null, "124 (Underwater)", null, 1)
+sec6.addMon("Relicanth", null, "124 (Underwater)", null, 1)
+sec6.addMon("Chinchou", 26,"124 (Underwater)",27,2)
+sec6.addMon("Regirock", null, "111", null, 1)
+sec6.addMon("Regice", null, "105", null, 1)
+sec6.addMon("Registeel", null, "120", null, 1)
+sec6.addMon("Rayquaza", null, "Sky Pillar", null, 1)
+
+sec6.addNote("You will need 1 leaf and 2 water stones. You get them by trading shards to the guy in the house on 114. Relicanth has the shard for a leaf stone and clamperl has the shard for a water stone.")
+sec6.addNote("Should end with 167 Pokemon")
+
+sec6.add2Div("sec6")
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
