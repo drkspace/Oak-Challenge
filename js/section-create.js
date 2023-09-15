@@ -179,7 +179,7 @@ export class Section{
             }
             else{
                 m.evolve_lvl.forEach(lvl => {
-                    rcNeeded += Math.max(1,lvl)-m.level
+                    rcNeeded += Math.max(1,lvl-m.level)
                 });
                 
             }
