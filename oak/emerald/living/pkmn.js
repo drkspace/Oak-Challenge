@@ -199,5 +199,41 @@ sec7.addNote("You can't fly to the E4 so get Mawile and get out.")
 sec7.add2Div("sec7")
 
 
+sec8 = new Section("Postgame")
+sec8.addMon("Beldum",5, "Mossdeep/Breed", "20,45", 3, ["You get 1 from Steven's house then you'll need to breed 2 with ditto."])
+sec8.addMon("Latias", null, null, null, 1, ["Go between routes until it appears"])
+sec8.addNote("Groudon", null, null, null, 1, ["The man in the weather institute will tell you what route it's on."])
+sec8.addNote("Kyogre", null, null, null, 1, ["The man in the weather institute will tell you what route it's on."])
+sec8.addMon("Ditto", null, "Desert Underpass", null, 1)
+sec8.addMon("Lileep", 20, "Desert Underpass/Breed", 40, 2)
+sec8.addMon("Meoweth", 7, "Battle Frontier/Breed", 28, 2)
+sec8.addMon("Sudowoodo", null, "Battle Frontier", null, 1, ["Need wailmer pail"])
+sec8.addMon("Smeargle", null, "Artisan's Cave", null, 1)
+sec8.addMon("Hoothoot", 35, "Safari Zone Southeast",20, 2)
+sec8.addMon("Spinarak", 33, "Safari Zone Southeast", 22, 2)
+sec8.addMon("Mareep",34 , "Safari Zone Southeast", "15,30", 3)
+sec8.addMon("Aipom", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Sunkern", null, "Safari Zone Southeast", null, 2)
+sec8.addMon("Snubbull", 34, "Safari Zone Southeast", 23, 2)
+sec8.addMon("Gligar", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Stantler", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Wooper", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Quagsire", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Remoraid", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Octillery", null, "Safari Zone Southeast", null, 1)
+sec8.addMon("Ledyba",33 , "Safari Zone Northeast", 18, 2)
+sec8.addMon("Pineco", 34, "Safari Zone Northeast", 31, 2)
+sec8.addMon("Teddiursa", 34, "Safari Zone Northeast", 30, 2)
+sec8.addMon("Houndour",36 , "Safari Zone Northeast", 24, 2)
+sec8.addMon("Miltank", null, "Safari Zone Northeast", null, 1)
+sec8.addMon("Shuckle", null, "Safari Zone Northeast", null, 1)
+
+
+sec8.add2Div("sec8")
+
+
+
+
+
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
