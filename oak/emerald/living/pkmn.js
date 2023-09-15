@@ -196,7 +196,7 @@ sec7.addMon("Bagon", 35, "Meteor Falls B1F 2R", "30,50", 3)
 sec7.addNote("I recomend getting Mawile first, getting the teleport point in Fourtree, then getting Bagon. Last section without fly!")
 sec7.addNote("You can't fly to the E4 so get Mawile and get out.")
 
-sec6.add2Div("sec7")
+sec7.add2Div("sec7")
 
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
