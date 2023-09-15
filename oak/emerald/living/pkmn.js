@@ -185,6 +185,7 @@ sec6.addMon("Vileploom", null, null, null, 1)
 sec6.addNote("You will need 1 leaf and 2 water stones. You get them by trading shards to the guy in the house on 114. Relicanth has the shard for a leaf stone and clamperl has the shard for a water stone.")
 sec6.addNote("Since you need relicanth and wailord in your party to do the regis, I recommend to leave Mossdeep with an empty party slot and Wailord. For information on how to do the puzzle, see <a href=\"https://www.serebii.net/emerald/regi.shtml\">here</a>.")
 sec6.addNote("Rayquaza will be your second/third HM slave as it can learn every HM except flash (your teleported can learn flash).")
+sec7.addNote("Rayquaza will (probably) end the run with surf, waterfall, dive, and fly, so you mihgt as well teach them all at once.")
 sec6.addNote("Should end with 167 Pokemon")
 
 sec6.add2Div("sec6")
@@ -195,7 +196,6 @@ sec7.addMon("Bagon", 35, "Meteor Falls B1F 2R", "30,50", 3)
 
 sec7.addNote("I recomend getting Mawile first, getting the teleport point in Fourtree, then getting Bagon. Last section without fly!")
 sec7.addNote("You can't fly to the E4 so get Mawile and get out.")
-
 sec7.add2Div("sec7")
 
 
