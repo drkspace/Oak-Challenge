@@ -82,11 +82,19 @@
             return encounterList
         }
 
-        const encounters = (await getEncounterList()).map(ele => {
+        let tmp = (await getEncounterList()).map(ele => {
             ele["map"] = ele["map"].replace("MAP", "").replaceAll("_", " ").trim()
             ele["base_label"] = ele["base_label"].replace("g", "").replaceAll("_", " ").trim()
             return ele
         })
+    
+        tmp.sort((a,b)=>{
+            return a["map"].localeCompare(b["map"]);
+        })
+
+        const encounters = [...tmp]
+
+        console.log(encounters)
 
         let selectRoute = document.getElementById("select-route")
         encounters.forEach(ele => {
