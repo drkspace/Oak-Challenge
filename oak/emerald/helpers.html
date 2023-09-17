@@ -129,7 +129,8 @@
 
         const encounters = [...tmp]
 
-        let selectRoute = document.getElementById("select-route")
+
+        let selectRoute = document.getElementById("select-route-table")
         encounters.forEach(ele => {
             let tmp = document.createElement("option")
             tmp.setAttribute("value", ele["base_label"])
@@ -137,13 +138,15 @@
             selectRoute.appendChild(tmp)
         });
 
-        selectRoute = document.getElementById("select-route-table")
+        selectRoute = document.getElementById("select-route")
         encounters.forEach(ele => {
             let tmp = document.createElement("option")
             tmp.setAttribute("value", ele["base_label"])
             tmp.innerText = ele["map"]
             selectRoute.appendChild(tmp)
         });
+
+        
 
         function updateEncounter(event) {
             let i;
