@@ -228,6 +228,7 @@ sec8.addMon("Houndour",36 , "Safari Zone Northeast", 24, 2)
 sec8.addMon("Miltank", null, "Safari Zone Northeast", null, 1)
 sec8.addMon("Shuckle", null, "Safari Zone Northeast", null, 1)
 
+sec8.addNote("You end with 212 Pokemon")
 
 sec8.add2Div("sec8")
 
