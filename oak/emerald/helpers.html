@@ -43,6 +43,41 @@
         </div>
     </div>
     <hr>
+
+    <div>
+        <h3 class="text-center">
+            Encounter Table
+        </h3>
+        <div id="find-enocounter-table" class="px-5 mt-1">
+            <input type="number" min="0" max="4294967295" id="seed-b10-table" placeholder="Seed (base 10)"> <label
+                for="onBike">On
+                Bike</label><input type="checkbox" id="onBike-table"><br><br>
+            <input pattern="[a-fA-F\d]+" id="seed-b16-table" placeholder="Seed (hex)"> <br><br>
+            <input type="number" id="max-look-ahead-table" placeholder="Lookahead (frames)" min="0"> <br>
+            <select id="select-route-table" name="route"></select> <br>
+            <select id="select-type-table" name="type">
+                <option value="walk">Walk</option>
+                <option value="surf">Surf</option>
+                <option value="fishing">Fishing</option>
+            </select> <br>
+            <button class="btn btn-primary" id="btn-table">Go!</button>
+        </div>
+        <br>
+        <div id="encounter-table" class="mx-5 my-1">
+            <table class="table table-bordered text-center table-striped table-hover">
+                <thead>
+                    <th>Pokemon</th>
+                    <th>Frames Ahead</th>
+                    <th>Generation Seed</th>
+                </thead>
+                <tbody id="found-slot-table">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr>
+
     <div>
         <h2 class="text-center">
             Frame Difference
@@ -94,9 +129,15 @@
 
         const encounters = [...tmp]
 
-        console.log(encounters)
-
         let selectRoute = document.getElementById("select-route")
+        encounters.forEach(ele => {
+            let tmp = document.createElement("option")
+            tmp.setAttribute("value", ele["base_label"])
+            tmp.innerText = ele["map"]
+            selectRoute.appendChild(tmp)
+        });
+
+        selectRoute = document.getElementById("select-route-table")
         encounters.forEach(ele => {
             let tmp = document.createElement("option")
             tmp.setAttribute("value", ele["base_label"])
@@ -300,6 +341,106 @@
         }
 
         document.getElementById("btn").addEventListener('click', findNextEncounter)
+
+        export function genEncounterTable() {
+            let seed = document.getElementById("seed-b10-table").value
+            if (seed == "") {
+                seed = parseInt(document.getElementById("seed-b16-table").value, 16)
+            }
+            if (seed == "") {
+                alert("Invalid Seed")
+                return
+            }
+
+
+            let lookahead = document.getElementById("max-look-ahead-table").value
+            if (lookahead == "") {
+                lookahead = 60 * 30
+            }
+            else {
+                lookahead = parseInt(lookahead)
+            }
+
+            let selectEncType = document.getElementById("select-type-table")
+            const encType = selectEncType.options[selectEncType.selectedIndex].value 
+            
+            let rate;
+            let availEncs;
+            if(encType=='walk'){
+                if(!curMap.hasOwnProperty('land_mons')){
+                    alert("The selected route does not have any walking encounters")
+                    return;
+                }
+                rate = curMap["land_mons"]["encounter_rate"]
+                availEncs = curMap["land_mons"]["mons"]
+            }
+            else if(encType=='surf'){
+                if(!curMap.hasOwnProperty('water_mons')){
+                    alert("The selected route does not have any walking encounters")
+                    return;
+                }
+                rate = curMap["water_mons"]["encounter_rate"]
+                availEncs = curMap["water_mons"]["mons"]
+            }
+            else{
+                if(!curMap.hasOwnProperty('fishing_mons')){
+                    alert("The selected route does not have any walking encounters")
+                    return;
+                }
+                rate = curMap["fishing_mons"]["encounter_rate"]
+                availEncs = curMap["fishing_mons"]["mons"]
+            }
+
+            if (document.getElementById("onBike").checked) {
+                rate = Math.floor(rate * 8 / 10)
+            }
+
+            let output = document.getElementById("found-slot-table")
+            output.innerHTML = ''
+
+            let curFrames = 0
+
+            console.log(curMap)
+            while (curFrames < lookahead) {
+
+                let tmp = forceEncounter(seed, [...Array(availEncs.length).keys()], lookahead, rate)
+                seed = tmp[1]
+                let mon = genMon(seed)
+                let nFramesWait = tmp[0]
+
+                curFrames += nFramesWait
+
+                if (tmp[2] && curFrames <= lookahead) {
+                    let row = document.createElement("tr")
+
+                    let c = document.createElement("td")
+                    c.innerText = mons[availEncs[mon.slot]["species"]]
+                    row.appendChild(c)
+
+                    c = document.createElement("td")
+                    c.innerText = ''+curFrames+" ("+Math.round(curFrames*100/60)/100+" sec)"
+                    row.appendChild(c)
+
+                    c = document.createElement("td")
+                    c.innerText = seed.toString() + " (0x" + seed.toString(16) + ")"
+                    row.appendChild(c)
+                    output.appendChild(row)
+                }
+                else {
+                    if (output.innerHTML == '') {
+                        let row = document.createElement("tr")
+                        let c = document.createElement("td")
+                        c.innerText = "Could not find Pokemon"
+                        row.appendChild(c)
+                        output.appendChild(row)
+                    }
+                    break
+                }
+                seed = adv(seed)
+            }
+        }
+
+        document.getElementById("btn-table").addEventListener('click', genEncounterTable)
 
     </script>
 
