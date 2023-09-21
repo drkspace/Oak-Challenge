@@ -12,6 +12,14 @@ else
     doStorage = false
 }
 
+/**
+ * Create a cell for a row in a table with a certain type of data
+ * @param {HTMLTableRowElement} parent The parent row element
+ * @param {string|HTMLElement|Array} inner The inner text/HTML/array
+ * @param {string} cellType="td" The element tag type
+ * @param {string} customId=null An id to give the cell
+ * @returns {HTMLTableCellElement} The cell element
+ */
 function createChildCell(parent, inner, cellType="td", customId=null){
     let cell = document.createElement(cellType)
     if(inner instanceof HTMLElement)
@@ -37,8 +45,21 @@ function createChildCell(parent, inner, cellType="td", customId=null){
     return cell
 }
 
+/**
+ * A Pokemon
+ */
 class Mon{
 
+    /**
+     * Constructor for a pokemon
+     * @param {string} name The name of the pokemon
+     * @param {int} level The max level of the pokemon
+     * @param {string} route The route to catch the pokemon
+     * @param {int|string} evolve_lvl The level(s) the pokemon evolves at. Can be single number or a list like "16,32"
+     * @param {int} numToCatch The number of the pokemon to catch
+     * @param {string[]} notes An array of strings to appear as hover notes for the pokemon
+     * @returns {any}
+     */
     constructor(name, level, route, evolve_lvl, numToCatch, notes){
         this.name = name
         if (level == null)
@@ -74,6 +95,10 @@ class Mon{
 
     }
 
+    /**
+     * Convert a pokemon to a row for a table
+     * @returns the row element
+     */
     toRow(){
         let row = document.createElement("tr")
 
@@ -135,17 +160,38 @@ class Mon{
     }
 }
 
+/**
+ * A section of the game
+ */
 export class Section{
+    
+    /**
+     * 
+     * @param {string} name The name of the section. To be used as the section header.
+     */
     constructor(name){
         this.name = name
         this.mons = []
         this.notes = []
     }
 
+    /**
+     * Add a pokemon to the section
+     * @param {string} name The name of the pokemon
+     * @param {int} level The max level of the pokemon
+     * @param {string} route The route to catch the pokemon
+     * @param {int|string} evolve_lvl The level(s) the pokemon evolves at. Can be single number or a list like "16,32"
+     * @param {int} numToCatch The number of the pokemon to catch
+     * @param {string[]} notes An array of strings to appear as hover notes for the pokemon
+     */
     addMon(name, level, route, evolve_lvl, numToCatch, notes){
         this.mons.push(new Mon(name, level, route, evolve_lvl, numToCatch, notes))
     }
 
+    /**
+     * Convert the pokemon to a table
+     * @returns The table element
+     */
     toTable(){
         let table = document.createElement("table")
         table.classList.add("table")
@@ -218,6 +264,10 @@ export class Section{
         return table;
     }
 
+    /**
+     * Add the section to a div
+     * @param {string} id The id of the div
+     */
     add2Div(id){
         this.mons.sort((a,b)=>{
             ('' + a.route).localeCompare(b.route);
@@ -247,6 +297,10 @@ export class Section{
         div.appendChild(notes)
     }
 
+    /**
+     * Add a note for the section
+     * @param {string} note A note
+     */
     addNote(note)
     {
         this.notes.push(note)
