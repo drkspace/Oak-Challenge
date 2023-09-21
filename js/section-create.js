@@ -2,12 +2,10 @@
 
 let doStorage = null
 
-if (typeof(Storage) !== undefined)
-{
+if (typeof (Storage) !== undefined) {
     doStorage = true
 }
-else
-{
+else {
     console.warn("No local storage available for the browser. Results will not save")
     doStorage = false
 }
@@ -20,27 +18,24 @@ else
  * @param {string} customId=null An id to give the cell
  * @returns {HTMLTableCellElement} The cell element
  */
-function createChildCell(parent, inner, cellType="td", customId=null){
+function createChildCell(parent, inner, cellType = "td", customId = null) {
     let cell = document.createElement(cellType)
-    if(inner instanceof HTMLElement)
-    {
+    if (inner instanceof HTMLElement) {
         cell.appendChild(inner)
     }
-    else if(inner instanceof Array )
-    {
+    else if (inner instanceof Array) {
         inner.forEach(ele => {
             cell.appendChild(ele)
         });
     }
-    else{
+    else {
         cell.innerText = inner
     }
 
-    if (customId != null)
-    {
+    if (customId != null) {
         cell.setAttribute("id", customId)
     }
-    
+
     parent.appendChild(cell)
     return cell
 }
@@ -48,7 +43,7 @@ function createChildCell(parent, inner, cellType="td", customId=null){
 /**
  * A Pokemon
  */
-class Mon{
+class Mon {
 
     /**
      * Constructor for a pokemon
@@ -60,36 +55,30 @@ class Mon{
      * @param {string[]} notes An array of strings to appear as hover notes for the pokemon
      * @returns {any}
      */
-    constructor(name, level, route, evolve_lvl, numToCatch, notes){
+    constructor(name, level, route, evolve_lvl, numToCatch, notes) {
         this.name = name
-        if (level == null)
-        {
+        if (level == null) {
             this.level = "—"
         }
-        else{
-        this.level = level
+        else {
+            this.level = level
         }
         this.route = route
-        if (evolve_lvl != null)
-        {
-        this.evolve_lvl = String(evolve_lvl).split(',').map(Number)
+        if (evolve_lvl != null) {
+            this.evolve_lvl = String(evolve_lvl).split(',').map(Number)
         }
-        else
-        {
+        else {
             this.evolve_lvl = ["—"]
         }
         this.numToCatch = numToCatch
 
-        if (notes instanceof Array)
-        {
+        if (notes instanceof Array) {
             this.notes = notes
         }
-        else if (notes != null && notes!==undefined)
-        {
+        else if (notes != null && notes !== undefined) {
             this.notes = [notes]
         }
-        else
-        {
+        else {
             this.notes = null
         }
 
@@ -99,12 +88,11 @@ class Mon{
      * Convert a pokemon to a row for a table
      * @returns the row element
      */
-    toRow(){
+    toRow() {
         let row = document.createElement("tr")
 
         let nameCell = createChildCell(row, this.name)
-        if(this.notes != null)
-        {
+        if (this.notes != null) {
             nameCell.innerText = this.name
 
             nameCell.setAttribute("data-bs-container", "body")
@@ -125,33 +113,30 @@ class Mon{
         createChildCell(row, this.evolve_lvl.join(","))
         createChildCell(row, this.numToCatch)
         let checks = []
-        
-        
+
+
         for (let i = 0; i < this.numToCatch; i++) {
             checks.push(document.createElement("input"))
             checks[i].setAttribute("type", "checkbox")
-            checks[i].setAttribute("id", this.name+"-cought-"+i)
-            if(doStorage)
-            {
-                let prevChecked = JSON.parse(localStorage.getItem(this.name+"-cought-"+i))
-                
+            checks[i].setAttribute("id", this.name + "-cought-" + i)
+            if (doStorage) {
+                let prevChecked = JSON.parse(localStorage.getItem(this.name + "-cought-" + i))
+
                 // Yes, this should be done in 1 line, but just in case I'll count the amount of captures here
-                if (prevChecked == false || prevChecked==null)
-                {
+                if (prevChecked == false || prevChecked == null) {
                     checks[i].checked = false
                 }
-                else
-                {
+                else {
                     checks[i].checked = true
                 }
             }
         }
-        if(this.numToCatch > 1){
-        checks.splice(1, 0, document.createElement("p"))
-        checks[1].setAttribute("class", "vr")
+        if (this.numToCatch > 1) {
+            checks.splice(1, 0, document.createElement("p"))
+            checks[1].setAttribute("class", "vr")
         }
         let checksCell = createChildCell(row, checks)
-        if(this.numToCatch > 1){
+        if (this.numToCatch > 1) {
             checksCell.setAttribute("class", "hstack gap-2")
         }
 
@@ -163,13 +148,13 @@ class Mon{
 /**
  * A section of the game
  */
-export class Section{
-    
+export class Section {
+
     /**
      * 
      * @param {string} name The name of the section. To be used as the section header.
      */
-    constructor(name){
+    constructor(name) {
         this.name = name
         this.mons = []
         this.notes = []
@@ -184,7 +169,7 @@ export class Section{
      * @param {int} numToCatch The number of the pokemon to catch
      * @param {string[]} notes An array of strings to appear as hover notes for the pokemon
      */
-    addMon(name, level, route, evolve_lvl, numToCatch, notes){
+    addMon(name, level, route, evolve_lvl, numToCatch, notes) {
         this.mons.push(new Mon(name, level, route, evolve_lvl, numToCatch, notes))
     }
 
@@ -192,7 +177,7 @@ export class Section{
      * Convert the pokemon to a table
      * @returns The table element
      */
-    toTable(){
+    toTable() {
         let table = document.createElement("table")
         table.classList.add("table")
         table.classList.add("table-striped")
@@ -203,12 +188,12 @@ export class Section{
 
         let header = document.createElement("thead")
         let headerRow = document.createElement("tr")
-        createChildCell(headerRow, "Name", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "Level", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "Route", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "Evolve Level", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "# to catch", "th").setAttribute("scope","col")
-        createChildCell(headerRow, "Caught", "th").setAttribute("scope","col")
+        createChildCell(headerRow, "Name", "th").setAttribute("scope", "col")
+        createChildCell(headerRow, "Level", "th").setAttribute("scope", "col")
+        createChildCell(headerRow, "Route", "th").setAttribute("scope", "col")
+        createChildCell(headerRow, "Evolve Level", "th").setAttribute("scope", "col")
+        createChildCell(headerRow, "# to catch", "th").setAttribute("scope", "col")
+        createChildCell(headerRow, "Caught", "th").setAttribute("scope", "col")
         header.appendChild(headerRow)
         table.appendChild(header)
 
@@ -217,17 +202,16 @@ export class Section{
         let tbody = document.createElement("tbody")
         this.mons.forEach(m => {
             tbody.appendChild(m.toRow())
-            if(m.evolve_lvl.length == 1)
-            {
-                if(!isNaN(m.evolve_lvl[0])){
-                    rcNeeded += Math.max(1, (m.evolve_lvl[0]-m.level)*Math.max(1, m.numToCatch-1))
+            if (m.evolve_lvl.length == 1) {
+                if (!isNaN(m.evolve_lvl[0])) {
+                    rcNeeded += Math.max(1, (m.evolve_lvl[0] - m.level) * Math.max(1, m.numToCatch - 1))
                 }
             }
-            else{
+            else {
                 m.evolve_lvl.forEach(lvl => {
-                    rcNeeded += Math.max(1,lvl-m.level)
+                    rcNeeded += Math.max(1, lvl - m.level)
                 });
-                
+
             }
             monsNeeded += m.numToCatch
         });
@@ -238,27 +222,27 @@ export class Section{
         createChildCell(resRow, "—")
         createChildCell(resRow, rcNeeded)
         createChildCell(resRow, monsNeeded)
-        
+
         // resRow.classList.add("table-secondary")
         tbody.appendChild(resRow)
         table.appendChild(tbody)
 
-        
+
         let curCount = 0
-        Array.from(table.getElementsByTagName("input")).forEach(ele =>{
+        Array.from(table.getElementsByTagName("input")).forEach(ele => {
             ele.addEventListener('change', (event) => {
                 if (event.currentTarget.checked) {
-                    countCell.innerHTML = Number(countCell.innerHTML)+1
+                    countCell.innerHTML = Number(countCell.innerHTML) + 1
                     localStorage.setItem(event.currentTarget.id, "true")
                 } else {
-                    countCell.innerHTML = Number(countCell.innerHTML)-1
+                    countCell.innerHTML = Number(countCell.innerHTML) - 1
                     localStorage.setItem(event.currentTarget.id, "false")
                 }
-              })
-              curCount += ele.checked
+            })
+            curCount += ele.checked
         })
 
-        let countCell = createChildCell(resRow, curCount,"td", this.name.replace(/\s+/g, '-')+"-count")
+        let countCell = createChildCell(resRow, curCount, "td", this.name.replace(/\s+/g, '-') + "-count")
 
 
         return table;
@@ -268,8 +252,8 @@ export class Section{
      * Add the section to a div
      * @param {string} id The id of the div
      */
-    add2Div(id){
-        this.mons.sort((a,b)=>{
+    add2Div(id) {
+        this.mons.sort((a, b) => {
             ('' + a.route).localeCompare(b.route);
         })
         let div = document.getElementById(id)
@@ -301,8 +285,7 @@ export class Section{
      * Add a note for the section
      * @param {string} note A note
      */
-    addNote(note)
-    {
+    addNote(note) {
         this.notes.push(note)
     }
 }
